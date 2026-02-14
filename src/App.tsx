@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lightbulb, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { FileUpload } from "./features/upload/FileUpload";
 import { ResultsDisplay } from "./features/results/ResultsDisplay";
 import { Button } from "./components/ui/button";
@@ -38,8 +38,12 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow-lg">
-                <Lightbulb className="w-8 h-8 text-white" />
+              <div className="p-2 bg-white rounded-lg shadow-lg ring-1 ring-gray-200">
+                <img
+                  src="/asu-logo.webp"
+                  alt="ASU"
+                  className="w-10 h-10 object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
@@ -99,7 +103,7 @@ function App() {
       <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <p className="text-center text-sm text-gray-500">
-            Built for Graduation Project • Fall 2025
+            Built for Graduation Project • Spring 2026
           </p>
         </div>
       </footer>
