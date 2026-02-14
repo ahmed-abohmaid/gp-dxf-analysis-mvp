@@ -1,6 +1,10 @@
-# Electrical Load Estimation Dashboard
+# Ain Shams University Electrical Load Estimation Dashboard — Senior Design (EE)
 
-A modern React + TypeScript dashboard for analyzing AutoCAD DXF files and calculating electrical load estimation by room.
+Ain Shams University Electrical Engineering capstone project: a React + TypeScript web dashboard for analyzing AutoCAD DXF files and calculating room-by-room electrical load estimations (lighting and sockets).
+
+## Keywords
+
+Ain Shams University, electrical engineering, capstone, senior design, AutoCAD DXF, electrical load estimation, building services, load calculator
 
 ## Features
 
@@ -114,6 +118,7 @@ python backend/process_dxf.py path/to/file.dxf
 ```
 
 Output format:
+
 ```json
 {
   "success": true,
@@ -137,8 +142,8 @@ Output format:
 
 The system uses the following load factors (Watts/m²):
 
-| Room Type | Lighting | Sockets | Total |
-|-----------|----------|---------|-------|
+| Room Type | Lighting | Sockets | Total   |
+| --------- | -------- | ------- | ------- |
 | OFFICE    | 10 W/m²  | 25 W/m² | 35 W/m² |
 | BEDROOM   | 8 W/m²   | 20 W/m² | 28 W/m² |
 | LIVING    | 9 W/m²   | 22 W/m² | 31 W/m² |
@@ -154,16 +159,16 @@ To connect the frontend with a real backend API, modify `src/lib/dxf-processor.t
 private static async executePythonScript(file: File): Promise<LoadEstimationResult> {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   const response = await fetch('/api/process-dxf', {
     method: 'POST',
     body: formData
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to process file');
   }
-  
+
   return await response.json();
 }
 ```
@@ -181,24 +186,24 @@ app = Flask(__name__)
 def upload_file():
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
-    
+
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
-    
+
     if not file.filename.endswith('.dxf'):
         return jsonify({'error': 'Invalid file type'}), 400
-    
+
     # Save temporarily
     temp_path = f'/tmp/{file.filename}'
     file.save(temp_path)
-    
+
     # Process
     result = process_dxf(temp_path)
-    
+
     # Cleanup
     os.remove(temp_path)
-    
+
     return jsonify(result)
 
 if __name__ == '__main__':
@@ -208,16 +213,19 @@ if __name__ == '__main__':
 ## Design Principles
 
 ### Single Responsibility Principle
+
 - Each component has one clear purpose
 - Features are isolated in their own directories
 - Utility functions are separated from business logic
 
 ### Reusability
+
 - UI components are generic and reusable
 - Type definitions are centralized
 - Shared utilities in `lib/` directory
 
 ### Clean Architecture
+
 - Feature-based folder structure
 - Clear separation of concerns
 - Type-safe with TypeScript
@@ -238,6 +246,7 @@ LOAD_FACTORS = {
 ### Styling
 
 The design system uses:
+
 - **Font**: DM Sans (distinctive, modern)
 - **Colors**: Blue-focused palette with gradients
 - **Animations**: Smooth transitions and staggered reveals

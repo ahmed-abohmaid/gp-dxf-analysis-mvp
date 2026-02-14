@@ -41,16 +41,18 @@ function App() {
               <div className="p-2 bg-white rounded-lg shadow-lg ring-1 ring-gray-200">
                 <img
                   src="/asu-logo.webp"
-                  alt="ASU"
+                  alt="Ain Shams University logo — Electrical Load Estimation Dashboard"
                   className="w-10 h-10 object-contain"
                 />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
-                  Electrical Load Estimator
+                  Ain Shams University Electrical Load Estimator MVP
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">
-                  AutoCAD DXF Analysis Dashboard
+                  Ain Shams University Electrical Engineering senior design:
+                  AutoCAD DXF analysis and room-by-room electrical load
+                  estimation
                 </p>
               </div>
             </div>
@@ -82,11 +84,12 @@ function App() {
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                Upload Your DXF File
+                Upload Your AutoCAD DXF for Load Estimation
               </h2>
               <p className="text-gray-600">
-                Upload an AutoCAD DXF file to automatically calculate electrical
-                load estimation for all rooms
+                Upload a DXF file to run automated room-by-room electrical load
+                calculations (lighting & socket loads) — built for Ain Shams
+                University Electrical Engineering capstone.
               </p>
             </div>
             <FileUpload
@@ -103,7 +106,7 @@ function App() {
       <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <p className="text-center text-sm text-gray-500">
-            Built for Graduation Project • Spring 2026
+            Built for Ain Shams University — GP (Spring 2026)
           </p>
         </div>
       </footer>

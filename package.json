@@ -2,6 +2,7 @@
   "name": "load-estimation-dashboard",
   "private": true,
   "version": "1.0.0",
+  "description": "Ain Shams University Electrical Engineering capstone: DXF-based electrical load estimation dashboard",
   "type": "module",
   "scripts": {
     "dev": "vite",
