@@ -6,7 +6,7 @@ export class DXFProcessorService {
   ): Promise<LoadEstimationResult> {
     // In a real implementation, this would send the file to a backend API
     // For MVP purposes, we'll simulate the Python script output
-    
+
     // This would typically be:
     // const formData = new FormData();
     // formData.append('file', file);
@@ -20,7 +20,7 @@ export class DXFProcessorService {
   }
 
   private static async simulateProcessing(
-    file: File
+    _file: File
   ): Promise<LoadEstimationResult> {
     // Simulate processing delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
