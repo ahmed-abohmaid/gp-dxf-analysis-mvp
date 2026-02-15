@@ -4,6 +4,10 @@
   "type": "module",
   "description": "Backend API for DXF processing",
   "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "start": "tsx server.js",
     "dev": "tsx watch server.js",
@@ -14,7 +18,8 @@
     "cors": "^2.8.5",
     "dxf-parser": "^1.1.2",
     "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "tsx": "^4.7.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -22,7 +27,6 @@
     "@types/multer": "^1.4.11",
     "@types/node": "^20.10.6",
     "nodemon": "^3.0.2",
-    "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   }
 }
