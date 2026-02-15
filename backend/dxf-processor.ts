@@ -3,8 +3,6 @@ import Flatten from "@flatten-js/core";
 import fs from "fs/promises";
 import config from "./config";
 
-const { polygon, point } = Flatten;
-
 interface TextEntity {
   text: string;
   point: any; // Flatten.Point
@@ -56,13 +54,14 @@ export async function processDxfFile(filePath: string): Promise<ProcessResult> {
     for (const entity of dxf.entities) {
       if (entity.type === "TEXT" || entity.type === "MTEXT") {
         try {
-          const text = (entity.text || "").trim().toUpperCase();
-          const position = entity.position || entity.startPoint;
+          const entityAny = entity as any;
+          const text = (entityAny.text || "").trim().toUpperCase();
+          const position = entityAny.position || entityAny.startPoint;
 
           if (text && position) {
             texts.push({
               text,
-              point: point(position.x, position.y),
+              point: new Flatten.Point(position.x, position.y),
             });
           }
         } catch (err) {
@@ -75,17 +74,18 @@ export async function processDxfFile(filePath: string): Promise<ProcessResult> {
     for (const entity of dxf.entities) {
       if (entity.type === "LWPOLYLINE" || entity.type === "POLYLINE") {
         try {
-          const vertices = entity.vertices || [];
+          const entityAny = entity as any;
+          const vertices = entityAny.vertices || [];
 
           if (vertices.length < 3) {
             continue;
           }
 
           // Convert vertices to Flatten.js points
-          const points = vertices.map((v) => point(v.x, v.y));
+          const points = vertices.map((v: any) => new Flatten.Point(v.x, v.y));
 
           // Create Flatten.js polygon
-          const poly = polygon(points);
+          const poly = new Flatten.Polygon(points);
 
           // Get area (automatically calculated for Cartesian coordinates)
           const area = poly.area();
@@ -129,7 +129,8 @@ export async function processDxfFile(filePath: string): Promise<ProcessResult> {
 
       // Get load factors for this room type
       const factors =
-        config.loadFactors[roomType] || config.loadFactors.DEFAULT;
+        config.loadFactors[roomType as keyof typeof config.loadFactors] ||
+        config.loadFactors.DEFAULT;
 
       // Calculate loads
       const lightingLoad = area * factors.lighting;
