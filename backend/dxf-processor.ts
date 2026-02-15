@@ -2,6 +2,7 @@ import DxfParser from "dxf-parser";
 import Flatten from "@flatten-js/core";
 import fs from "fs/promises";
 import config from "./config";
+import { convertWattsToKVA } from "./utils";
 
 interface DxfEntity {
   type: string;
@@ -291,7 +292,7 @@ export async function processDxfFile(filePath: string): Promise<ProcessResult> {
 
     console.log("=".repeat(95));
     console.log(
-      `TOTAL ROOMS: ${roomsData.length} | TOTAL ESTIMATED LOAD: ${(totalLoad / 1000).toFixed(2)} kVA`
+      `TOTAL ROOMS: ${roomsData.length} | TOTAL ESTIMATED LOAD: ${convertWattsToKVA(totalLoad).toFixed(2)} kVA`
     );
     console.log("=".repeat(95));
 
