@@ -5,7 +5,6 @@ Get up and running in 5 minutes!
 ## Prerequisites
 
 - Node.js 18+ ([Download](https://nodejs.org/))
-- Python 3.8+ ([Download](https://www.python.org/))
 - Code editor (VS Code recommended)
 
 ## Installation
@@ -24,10 +23,7 @@ chmod +x setup.sh
 # 1. Install frontend dependencies
 npm install
 
-# 2. Install Python dependencies
-pip3 install ezdxf shapely --break-system-packages
-
-# 3. Install backend dependencies (optional)
+# 2. Install backend dependencies
 cd backend
 npm install
 cd ..
@@ -35,28 +31,22 @@ cd ..
 
 ## Running the App
 
-### Option 1: Frontend Only (with Mock Data)
-
-```bash
-npm run dev
-```
-
-Open http://localhost:5173
-
-### Option 2: Full Stack (with Real Processing)
+### Full Stack Setup (Recommended)
 
 **Terminal 1 - Backend:**
+
 ```bash
 cd backend
-npm start
+npm run dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 npm run dev
 ```
 
-Then update `src/lib/dxf-processor.ts` to use real API (see comment in file).
+Open http://localhost:5173 and upload a DXF file!
 
 ## Testing
 
@@ -101,17 +91,20 @@ cd backend && npm start    # Start API
 ## Troubleshooting
 
 **Port 5173 in use?**
+
 ```bash
 lsof -ti:5173 | xargs kill -9
 npm run dev
 ```
 
 **Python errors?**
+
 ```bash
 pip3 install --upgrade ezdxf shapely
 ```
 
 **Build errors?**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install

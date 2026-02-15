@@ -7,6 +7,7 @@ A production-ready React + TypeScript dashboard for analyzing AutoCAD DXF files 
 ## ✨ Key Features
 
 ### Frontend
+
 - ✅ **Modern Stack**: React 18, TypeScript, Vite
 - ✅ **UI Framework**: Custom shadcn/ui implementation with Tailwind CSS
 - ✅ **File Upload**: Drag-and-drop + click-to-browse
@@ -16,12 +17,14 @@ A production-ready React + TypeScript dashboard for analyzing AutoCAD DXF files 
 - ✅ **Type Safety**: Full TypeScript coverage
 
 ### Backend
-- ✅ **Python Processor**: Uses ezdxf + shapely for DXF parsing
-- ✅ **JSON API**: Structured output format
-- ✅ **Node.js Server**: Express-based API (optional)
-- ✅ **Error Handling**: Comprehensive error messages
+
+- ✅ **TypeScript Processor**: Uses dxf-parser + @flatten-js/core for DXF parsing
+- ✅ **Express API**: RESTful API with file upload support
+- ✅ **Configuration**: Environment-based config management
+- ✅ **Error Handling**: Custom error classes and centralized handlers
 
 ### Code Quality
+
 - ✅ **ESLint**: Configured with TypeScript rules
 - ✅ **Prettier**: Consistent code formatting
 - ✅ **Clean Architecture**: Feature-based organization
@@ -31,6 +34,7 @@ A production-ready React + TypeScript dashboard for analyzing AutoCAD DXF files 
 ## 🏗️ Architecture
 
 ### Directory Structure
+
 ```
 load-dashboard/
 ├── src/
@@ -53,8 +57,10 @@ load-dashboard/
 │   ├── main.tsx             # Entry point
 │   └── index.css            # Global styles
 ├── backend/
-│   ├── process_dxf.py       # Python DXF processor
+│   ├── dxf-processor.ts     # TypeScript DXF processor
 │   ├── server.js            # Express API server
+│   ├── config.ts            # Configuration
+│   ├── errors.ts            # Error classes
 │   └── package.json
 ├── package.json
 ├── tsconfig.json
@@ -70,16 +76,19 @@ load-dashboard/
 ### Design Patterns
 
 **1. Feature-Based Organization**
+
 - Each feature is self-contained
 - Easy to add/remove features
 - Clear separation of concerns
 
 **2. Single Responsibility Principle**
+
 - UI components handle presentation only
 - Business logic in services
 - Type definitions centralized
 
 **3. Reusability**
+
 - Generic UI components
 - Pure utility functions
 - Shared TypeScript types
@@ -87,12 +96,14 @@ load-dashboard/
 ## 🎨 Design System
 
 ### Visual Identity
+
 - **Font**: DM Sans (distinctive, modern, not generic)
 - **Color Palette**: Blue-focused with gradients
 - **Layout**: Clean, spacious, clear hierarchy
 - **Animations**: Smooth transitions, staggered reveals
 
 ### UI Components
+
 - **Button**: Multiple variants (default, outline, ghost, secondary)
 - **Card**: Container with header, content, description
 - **Table**: Responsive table with hover states
@@ -101,6 +112,7 @@ load-dashboard/
 ## 🚀 Getting Started
 
 ### Quick Setup
+
 ```bash
 # Clone/extract the project
 cd load-dashboard
@@ -114,6 +126,7 @@ npm run dev
 ```
 
 ### Manual Setup
+
 ```bash
 # Frontend
 npm install
@@ -122,17 +135,14 @@ npm run dev
 # Backend (separate terminal)
 cd backend
 npm install
-npm start
-
-# Python dependencies
-pip3 install ezdxf shapely
+npm run dev
 ```
 
 ## 📊 Data Flow
 
 1. **User uploads DXF file** → FileUpload component
-2. **File sent to processor** → DXFProcessorService
-3. **Python script processes** → extract rooms, calculate loads
+2. **File sent to backend** → processDXFFile function
+3. **TypeScript processor parses DXF** → extract rooms, calculate loads
 4. **JSON response returned** → LoadEstimationResult type
 5. **Results displayed** → ResultsDisplay component
 
@@ -159,8 +169,9 @@ interface LoadEstimationResult {
 ## ⚡ Load Calculation
 
 ### Factors (Watts/m²)
+
 | Room Type | Lighting | Sockets | Total   |
-|-----------|----------|---------|---------|
+| --------- | -------- | ------- | ------- |
 | OFFICE    | 10       | 25      | 35 W/m² |
 | BEDROOM   | 8        | 20      | 28 W/m² |
 | LIVING    | 9        | 22      | 31 W/m² |
@@ -169,6 +180,7 @@ interface LoadEstimationResult {
 | DEFAULT   | 8        | 15      | 23 W/m² |
 
 ### Formula
+
 ```
 Room Load = (Area × Lighting Factor) + (Area × Sockets Factor)
 Building Load = Sum of all Room Loads
@@ -177,20 +189,26 @@ Building Load = Sum of all Room Loads
 ## 🔧 Customization
 
 ### Modify Load Factors
-Edit `backend/process_dxf.py`:
-```python
-LOAD_FACTORS = {
-    "OFFICE": {"lighting": 12, "sockets": 30},
-    "CUSTOM": {"lighting": 10, "sockets": 20}
-}
+
+Edit `backend/config.ts`:
+
+```typescript
+export const config = {
+  loadFactors: {
+    OFFICE: { lighting: 12, sockets: 30 },
+    CUSTOM: { lighting: 10, sockets: 20 },
+  },
+};
 ```
 
 ### Change Styling
+
 - **Colors**: Edit `tailwind.config.js`
 - **Fonts**: Update `src/index.css` imports
 - **Layout**: Modify component classes
 
 ### Add New Features
+
 1. Create feature directory: `src/features/my-feature/`
 2. Build components
 3. Export from feature
@@ -211,39 +229,31 @@ npm run format        # Format with Prettier
 
 # Backend
 cd backend
-npm start            # Start API server
-npm run dev          # Start with nodemon
-
-# Python
-python backend/process_dxf.py file.dxf  # Process DXF directly
+npm run dev          # Start API server with watch mode
 ```
 
 ## 🌐 Deployment
 
 ### Frontend (Vercel/Netlify)
+
 1. Build: `npm run build`
 2. Deploy `dist/` folder
 3. Set environment variables if needed
 
 ### Backend (Railway/Render)
+
 1. Deploy `backend/` directory
 2. Set Node.js version: 18+
-3. Install Python dependencies
-4. Set start command: `npm start`
+3. Set start command: `npm start`
+4. Configure environment variables
 
 ## 🐛 Known Limitations
 
-1. **Mock Data**: Frontend currently uses simulated processing
-   - Solution: Connect to real backend API (see DEVELOPMENT.md)
-
-2. **File Validation**: Basic client-side validation only
-   - Enhancement: Add server-side validation
-
-3. **Large Files**: May take time to process
+1. **Large Files**: May take time to process
    - Enhancement: Add progress indication
 
-4. **Unit Drawing**: Assumes DXF is in meters
-   - Customization: Adjust area calculation in Python script
+2. **Unit Drawing**: Assumes DXF is in meters
+   - Customization: Adjust area calculation in dxf-processor.ts
 
 ## 📚 Documentation
 
@@ -267,6 +277,7 @@ python backend/process_dxf.py file.dxf  # Process DXF directly
 ## 🔄 Next Steps (Optional Enhancements)
 
 ### Phase 2 Features
+
 - [ ] Real backend API integration
 - [ ] User authentication
 - [ ] Save/load previous analyses
@@ -277,6 +288,7 @@ python backend/process_dxf.py file.dxf  # Process DXF directly
 - [ ] Unit system toggle (metric/imperial)
 
 ### Technical Improvements
+
 - [ ] Unit tests (Jest + React Testing Library)
 - [ ] E2E tests (Playwright)
 - [ ] CI/CD pipeline
@@ -287,6 +299,7 @@ python backend/process_dxf.py file.dxf  # Process DXF directly
 ## 📞 Support
 
 For issues or questions:
+
 1. Check DEVELOPMENT.md for troubleshooting
 2. Review code comments
 3. Test with provided Test_1.dxf file
@@ -309,4 +322,4 @@ MIT License - Free to use for your graduation project!
 ---
 
 **Built with ❤️ for Graduation Project • Fall 2025**
-**Stack**: React + TypeScript + Vite + Tailwind + shadcn/ui + Python
+**Stack**: React + TypeScript + Vite + Tailwind + shadcn/ui + Node.js + Express

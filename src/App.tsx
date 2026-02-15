@@ -4,7 +4,7 @@ import { FileUpload } from "./features/upload/FileUpload";
 import { ResultsDisplay } from "./features/results/ResultsDisplay";
 import { Button } from "./components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
-import { DXFProcessorService } from "./lib/dxf-processor";
+import { processDXFFile } from "./lib/dxf-processor";
 import type { LoadEstimationResult } from "./types";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
     setError(null);
 
     try {
-      const processedResults = await DXFProcessorService.processDXFFile(file);
+      const processedResults = await processDXFFile(file);
       setResults(processedResults);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

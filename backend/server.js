@@ -1,71 +1,145 @@
-import express from 'express';
-import multer from 'multer';
-import { spawn } from 'child_process';
-import path from 'path';
-import fs from 'fs';
-import cors from 'cors';
+import express from "express";
+import multer from "multer";
+import fs from "fs/promises";
+import cors from "cors";
+import { processDxfFile } from "./dxf-processor.ts";
+import config from "./config.ts";
 
 const app = express();
-const upload = multer({ dest: 'uploads/' });
 
-app.use(cors());
+// Create uploads directory if it doesn't exist
+await fs.mkdir(config.upload.directory, { recursive: true });
+
+// Configure multer with security limits
+const upload = multer({
+  dest: config.upload.directory,
+  limits: {
+    fileSize: config.upload.maxFileSize,
+    files: 1,
+  },
+  fileFilter: (req, file, cb) => {
+    const ext = file.originalname
+      .toLowerCase()
+      .substring(file.originalname.lastIndexOf("."));
+    if (config.upload.allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Only ${config.upload.allowedExtensions.join(", ")} files are allowed`
+        )
+      );
+    }
+  },
+});
+
+// Enable CORS with proper configuration
+app.use(cors(config.cors));
 app.use(express.json());
 
-app.post('/api/process-dxf', upload.single('file'), (req, res) => {
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    message: "DXF Processing API is running",
+  });
+});
+
+// DXF processing endpoint
+app.post("/api/process-dxf", upload.single("file"), async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
+    return res.status(400).json({
+      success: false,
+      error: "No file uploaded",
+    });
   }
 
-  if (!req.file.originalname.endsWith('.dxf')) {
-    fs.unlinkSync(req.file.path);
-    return res.status(400).json({ error: 'Invalid file type. Please upload a DXF file.' });
-  }
+  console.log(`Processing file: ${req.file.originalname}`);
 
-  const pythonProcess = spawn('python', [
-    path.join(__dirname, 'process_dxf.py'),
-    req.file.path
-  ]);
+  try {
+    // Process DXF file using TypeScript processor
+    const result = await processDxfFile(req.file.path);
 
-  let dataString = '';
-  let errorString = '';
-
-  pythonProcess.stdout.on('data', (data) => {
-    dataString += data.toString();
-  });
-
-  pythonProcess.stderr.on('data', (data) => {
-    errorString += data.toString();
-  });
-
-  pythonProcess.on('close', (code) => {
-    // Cleanup uploaded file
-    fs.unlinkSync(req.file.path);
-
-    if (code !== 0) {
-      console.error('Python process error:', errorString);
-      return res.status(500).json({ 
-        error: 'Failed to process DXF file',
-        details: errorString 
-      });
+    if (result.success) {
+      console.log(
+        `Successfully processed: ${result.rooms?.length || 0} rooms found`
+      );
+    } else {
+      console.error("Processing failed:", result.error);
     }
 
+    res.json(result);
+  } catch (error) {
+    console.error("DXF processing error:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to process DXF file",
+      details: error instanceof Error ? error.message : String(error),
+    });
+  } finally {
+    // Always cleanup uploaded file
     try {
-      const result = JSON.parse(dataString);
-      res.json(result);
-    } catch (error) {
-      res.status(500).json({ 
-        error: 'Failed to parse processing results',
-        details: error.message 
+      await fs.unlink(req.file.path);
+    } catch (err) {
+      console.error("Failed to cleanup file:", err);
+    }
+  }
+});
+
+// Handle multer errors
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({
+        success: false,
+        error: `File too large. Maximum size is ${config.upload.maxFileSize / (1024 * 1024)}MB`,
       });
     }
+    return res.status(400).json({
+      success: false,
+      error: err.message,
+    });
+  }
+  next(err);
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: "Not Found",
+    message: `Cannot ${req.method} ${req.path}`,
   });
 });
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+// Global error handler
+app.use((err, req, res, _next) => {
+  const statusCode = err.statusCode || 500;
+  const isOperational =
+    err.isOperational !== undefined ? err.isOperational : false;
+
+  // Log error
+  if (!isOperational || statusCode >= 500) {
+    console.error("Error:", err);
+  }
+
+  // Don't leak error details in production
+  const message = isOperational ? err.message : "Internal Server Error";
+  const isDev =
+    typeof process !== "undefined" && process.env.NODE_ENV !== "production";
+
+  res.status(statusCode).json({
+    success: false,
+    error: message,
+    ...(isDev && { stack: err.stack }),
+  });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(config.port, () => {
+  console.log(`🚀 Backend API server running on port ${config.port}`);
+  console.log(`📊 Health check: http://localhost:${config.port}/api/health`);
+  console.log(
+    `📁 DXF endpoint: http://localhost:${config.port}/api/process-dxf`
+  );
 });

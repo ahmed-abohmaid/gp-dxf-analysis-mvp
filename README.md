@@ -21,7 +21,7 @@ Ain Shams University, electrical engineering, capstone, senior design, AutoCAD D
 - **UI Components**: shadcn/ui (custom implementation)
 - **Styling**: TailwindCSS with custom design system
 - **Icons**: Lucide React
-- **Backend**: Python with ezdxf and shapely
+- **Backend**: Node.js with TypeScript, Express, dxf-parser, @flatten-js/core
 - **Code Quality**: ESLint, Prettier
 
 ## Project Structure
@@ -49,7 +49,10 @@ load-dashboard/
 │   ├── main.tsx             # Application entry point
 │   └── index.css            # Global styles
 ├── backend/
-│   └── process_dxf.py       # Python DXF processor
+│   ├── server.js            # Express API server
+│   ├── dxf-processor.ts     # DXF processing logic
+│   ├── config.ts            # Configuration management
+│   └── errors.ts            # Custom error classes
 └── package.json
 ```
 
@@ -58,8 +61,6 @@ load-dashboard/
 ### Prerequisites
 
 - Node.js 18+ and npm
-- Python 3.8+
-- pip
 
 ### Frontend Setup
 
@@ -79,14 +80,17 @@ The app will be available at `http://localhost:5173`
 ### Backend Setup
 
 ```bash
-# Install Python dependencies
-pip install ezdxf shapely --break-system-packages
+# Navigate to backend directory
+cd backend
 
-# Or use a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install ezdxf shapely
+# Install dependencies
+npm install
+
+# Start backend server
+npm run dev
 ```
+
+The backend API will be available at `http://localhost:5000`
 
 ## Usage
 
@@ -111,10 +115,12 @@ npm run preview
 
 ### Processing DXF Files
 
-The Python backend processes DXF files and outputs JSON:
+The TypeScript backend processes DXF files via HTTP API:
 
 ```bash
-python backend/process_dxf.py path/to/file.dxf
+# Upload a DXF file to the backend
+curl -X POST http://localhost:5000/api/process-dxf \
+  -F "file=@path/to/file.dxf"
 ```
 
 Output format:
@@ -140,7 +146,7 @@ Output format:
 
 ## Load Factors
 
-The system uses the following load factors (Watts/m²):
+The system uses the following load factors (Watts/m²) configured in `backend/config.ts`:
 
 | Room Type | Lighting | Sockets | Total   |
 | --------- | -------- | ------- | ------- |
@@ -151,48 +157,22 @@ The system uses the following load factors (Watts/m²):
 | TOILET    | 8 W/m²   | 10 W/m² | 18 W/m² |
 | DEFAULT   | 8 W/m²   | 15 W/m² | 23 W/m² |
 
-## Integration with Backend API
+## Configuration
 
-To connect the frontend with a real backend API, modify `src/lib/dxf-processor.ts`:
+The backend can be configured via environment variables. Create a `.env` file in the `backend/` directory:
 
-```typescript
-private static async executePythonScript(file: File): Promise<LoadEstimationResult> {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await fetch('/api/process-dxf', {
-    method: 'POST',
-    body: formData
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to process file');
-  }
-
-  return await response.json();
-}
+```env
+PORT=5000
+UPLOAD_DIR=uploads
+MAX_FILE_SIZE=10485760
+CORS_ORIGIN=http://localhost:5173,http://localhost:3000
 ```
 
-### Example Flask Backend
+For frontend configuration, create `.env` in the project root:
 
-```python
-from flask import Flask, request, jsonify
-from process_dxf import process_dxf
-import os
-
-app = Flask(__name__)
-
-@app.route('/api/process-dxf', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-
-    if not file.filename.endswith('.dxf'):
-        return jsonify({'error': 'Invalid file type'}), 400
+```env
+VITE_API_URL=http://localhost:5000
+```
 
     # Save temporarily
     temp_path = f'/tmp/{file.filename}'
@@ -206,9 +186,10 @@ def upload_file():
 
     return jsonify(result)
 
-if __name__ == '__main__':
-    app.run(debug=True)
-```
+if **name** == '**main**':
+app.run(debug=True)
+
+````
 
 ## Design Principles
 
@@ -241,7 +222,7 @@ LOAD_FACTORS = {
     "OFFICE": {"lighting": 12, "sockets": 30},  # Modified values
     "CUSTOM_TYPE": {"lighting": 10, "sockets": 20},  # New type
 }
-```
+````
 
 ### Styling
 
