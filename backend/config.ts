@@ -24,6 +24,9 @@ export const config = {
       ? process.env.CORS_ORIGIN.split(",")
       : ["http://localhost:5173", "http://localhost:3000"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 200,
   },
 
   // DXF Processing - Load Factors (Watts/m²)

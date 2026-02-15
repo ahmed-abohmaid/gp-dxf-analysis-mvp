@@ -35,6 +35,7 @@ const upload = multer({
 
 // Enable CORS with proper configuration
 app.use(cors(config.cors));
+app.options("*", cors(config.cors)); // Handle preflight requests
 app.use(express.json());
 
 // Health check endpoint
