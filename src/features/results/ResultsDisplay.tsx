@@ -25,7 +25,6 @@ interface ResultsDisplayProps {
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
   return (
     <div className="space-y-6 results-display">
-      {/* Summary Card */}
       <Card className="summary-card border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -50,7 +49,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
         </CardContent>
       </Card>
 
-      {/* Detailed Table */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
