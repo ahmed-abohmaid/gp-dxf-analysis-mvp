@@ -93,8 +93,7 @@ function App() {
               </h2>
               <p className="text-gray-600">
                 Upload a DXF file to run automated room-by-room electrical load
-                calculations (lighting & socket loads) — built for Ain Shams
-                University Electrical Engineering capstone.
+                calculations (lighting & socket loads)
               </p>
             </div>
             <FileUpload
