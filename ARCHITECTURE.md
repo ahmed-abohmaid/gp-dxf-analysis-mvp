@@ -29,7 +29,7 @@
 │  │  POST /api/process-dxf  ←→  Multer Upload Handler      │ │
 │  │                                      ↓                   │ │
 │  │                              ┌──────────────┐           │ │
-│  │                              │ Python Child │           │ │
+│  │                              │ TypeScript Processor │           │ │
 │  │                              │   Process    │           │ │
 │  └────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
@@ -47,6 +47,11 @@
 │  │  4. Calculate loads (area × factors)                   │ │
 │  │  5. Return JSON result                                 │ │
 │  └────────────────────────────────────────────────────────┘ │
+│  │  1. Read DXF file (dxf-parser)                        │ │
+│  │  2. Extract polylines & text (geometry processing)    │ │
+│  │  3. Match rooms to text labels                         │ │
+│  │  4. Calculate loads (area × factors)                   │ │
+│  │  5. Return JSON result                                 │ │
 └─────────────────────────────────────────────────────────────┘
                               │
                               │ JSON Response
@@ -104,7 +109,7 @@ App.tsx (Main Container)
 5. Express Server
    Receives & saves file
         ↓
-6. Python Script
+6. DXF Processing Script (TypeScript)
    Processes DXF file
         ↓
 7. JSON Response
@@ -141,9 +146,9 @@ App.tsx (Main Container)
                     ↓
 ┌─────────────────────────────────────────────┐
 │         Processing Layer                     │
-│  • Python 3.8+ (Script Runtime)             │
-│  • ezdxf (DXF Parsing)                      │
-│  • shapely (Geometry Processing)            │
+│  • Node.js / TypeScript                      │
+│  • dxf-parser (DXF Parsing)                  │
+│  • @flatten-js/core (Geometry Processing)    │
 └─────────────────────────────────────────────┘
 ```
 
@@ -161,9 +166,9 @@ load-dashboard/
 │   │   └── App.tsx            ← Main application
 │   └── package.json
 │
-├── Backend (Node.js + Python)
+├── Backend (Node.js TypeScript)
 │   ├── server.js              ← Express API
-│   ├── process_dxf.py         ← Python processor
+│   ├── dxf-processor.ts       ← TypeScript DXF processor
 │   └── package.json
 │
 └── Configuration
@@ -177,21 +182,25 @@ load-dashboard/
 ## Design Patterns Used
 
 ### 1. Feature-Based Architecture
+
 - Each feature in its own directory
 - Self-contained with types and components
 - Easy to add/remove features
 
 ### 2. Single Responsibility Principle
+
 - Components do one thing well
 - Services handle business logic
 - UI components are presentational
 
 ### 3. Dependency Injection
+
 - Props passed down from parent
 - Services injected via imports
 - Loose coupling between layers
 
 ### 4. Service Layer Pattern
+
 - DXFProcessorService handles API calls
 - Utilities provide helper functions
 - Clean separation of concerns
@@ -212,6 +221,7 @@ App.tsx (Top Level)
 ## API Contract
 
 ### Request
+
 ```typescript
 POST /api/process-dxf
 Content-Type: multipart/form-data
@@ -220,6 +230,7 @@ file: <DXF File>
 ```
 
 ### Response
+
 ```typescript
 {
   success: boolean,
@@ -231,20 +242,22 @@ file: <DXF File>
 ```
 
 ### Error Handling
+
 ```typescript
 try {
   // Process file
 } catch (error) {
   return {
     success: false,
-    error: error.message
-  }
+    error: error.message,
+  };
 }
 ```
 
 ## Deployment Architecture
 
 ### Development
+
 ```
 Local Machine
   ├── Frontend: http://localhost:5173
@@ -252,6 +265,7 @@ Local Machine
 ```
 
 ### Production
+
 ```
 Cloud Infrastructure
   ├── Frontend: Vercel/Netlify
@@ -280,6 +294,7 @@ Cloud Infrastructure
 ---
 
 This architecture follows **best practices** for:
+
 - ✅ Separation of concerns
 - ✅ Maintainability
 - ✅ Scalability

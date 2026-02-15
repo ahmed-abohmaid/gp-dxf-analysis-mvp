@@ -27,33 +27,54 @@ Ain Shams University, electrical engineering, capstone, senior design, AutoCAD D
 ## Project Structure
 
 ```
-load-dashboard/
+dashboard-mvp/
+├── ARCHITECTURE.md
+├── DEVELOPMENT.md
+├── index.html
+├── package.json
+├── postcss.config.js
+├── PROJECT_SUMMARY.md
+├── QUICKSTART.md
+├── README.md
+├── setup.sh
+├── tailwind.config.js
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+├── backend/
+│   ├── config.ts
+│   ├── dxf-processor.ts
+│   ├── errors.ts
+│   ├── package.json
+│   ├── railway.toml
+│   ├── server.js
+│   ├── tsconfig.json
+│   └── uploads/
+├── public/
 ├── src/
+│   ├── App.tsx
+│   ├── index.css
+│   ├── main.tsx
+│   ├── vite-env.d.ts
 │   ├── components/
-│   │   └── ui/              # Reusable UI components
+│   │   ├── Footer.tsx
+│   │   ├── Header.tsx
+│   │   └── ui/
+│   │       ├── alert.tsx
 │   │       ├── button.tsx
 │   │       ├── card.tsx
-│   │       ├── table.tsx
-│   │       └── alert.tsx
+│   │       └── table.tsx
 │   ├── features/
-│   │   ├── upload/          # File upload feature
-│   │   │   └── FileUpload.tsx
-│   │   └── results/         # Results display feature
-│   │       └── ResultsDisplay.tsx
+│   │   ├── results/
+│   │   │   └── ResultsDisplay.tsx
+│   │   └── upload/
+│   │       └── FileUpload.tsx
 │   ├── lib/
-│   │   ├── utils.ts         # Utility functions
-│   │   └── dxf-processor.ts # DXF processing service
-│   ├── types/
-│   │   └── index.ts         # TypeScript type definitions
-│   ├── App.tsx              # Main application component
-│   ├── main.tsx             # Application entry point
-│   └── index.css            # Global styles
-├── backend/
-│   ├── server.js            # Express API server
-│   ├── dxf-processor.ts     # DXF processing logic
-│   ├── config.ts            # Configuration management
-│   └── errors.ts            # Custom error classes
-└── package.json
+│   │   └── utils.ts
+│   ├── services/
+│   │   └── dxf-processor.ts
+│   └── types/
+│       └── index.ts
 ```
 
 ## Installation
@@ -144,6 +165,8 @@ Output format:
 }
 ```
 
+<!-- Note about PF removed per request -->
+
 ## Load Factors
 
 The system uses the following load factors (Watts/m²) configured in `backend/config.ts`:
@@ -174,22 +197,9 @@ For frontend configuration, create `.env` in the project root:
 VITE_API_URL=http://localhost:5000
 ```
 
-    # Save temporarily
-    temp_path = f'/tmp/{file.filename}'
-    file.save(temp_path)
-
-    # Process
-    result = process_dxf(temp_path)
-
-    # Cleanup
-    os.remove(temp_path)
-
-    return jsonify(result)
-
-if **name** == '**main**':
-app.run(debug=True)
-
-````
+```text
+# File upload is handled by the backend Express API in `backend/dxf-processor.ts`.
+```
 
 ## Design Principles
 
@@ -215,14 +225,17 @@ app.run(debug=True)
 
 ### Modifying Load Factors
 
-Edit the `LOAD_FACTORS` dictionary in `backend/process_dxf.py`:
+Edit the load factors in `backend/config.ts` (Watts/m²). Example entry:
 
-```python
-LOAD_FACTORS = {
-    "OFFICE": {"lighting": 12, "sockets": 30},  # Modified values
-    "CUSTOM_TYPE": {"lighting": 10, "sockets": 20},  # New type
-}
-````
+```ts
+// backend/config.ts
+export const config = {
+  loadFactors: {
+    OFFICE: { lighting: 12, sockets: 25, keywords: ["OFFICE"] },
+    DEFAULT: { lighting: 8, sockets: 15, keywords: [] },
+  },
+};
+```
 
 ### Styling
 

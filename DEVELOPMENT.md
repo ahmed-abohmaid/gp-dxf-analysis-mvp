@@ -3,6 +3,7 @@
 ## Quick Start
 
 ### Option 1: Automatic Setup
+
 ```bash
 chmod +x setup.sh
 ./setup.sh
@@ -11,17 +12,19 @@ chmod +x setup.sh
 ### Option 2: Manual Setup
 
 #### Frontend
+
 ```bash
 npm install
 npm run dev
 ```
 
-#### Backend (Node.js + Python)
+#### Backend (Node.js TypeScript)
+
 ```bash
 # Terminal 1 - Node.js API
 cd backend
 npm install
-npm start
+npm run dev
 
 # Terminal 2 - Frontend
 npm run dev
@@ -32,12 +35,14 @@ npm run dev
 ### Running the Application
 
 1. **Start Backend** (Terminal 1):
+
    ```bash
    cd backend
    npm run dev  # Uses nodemon for auto-reload
    ```
 
 2. **Start Frontend** (Terminal 2):
+
    ```bash
    npm run dev  # Vite dev server with HMR
    ```
@@ -143,31 +148,36 @@ export const MyFeature: React.FC<MyFeatureProps> = ({ data, onAction }) => {
 ## Backend Integration
 
 ### Current Setup (Mock)
+
 The frontend currently uses mock data in `src/lib/dxf-processor.ts`
 
 ### Integrating Real Backend
 
 1. **Update Service**:
+
 ```typescript
-// src/lib/dxf-processor.ts
-private static async executePythonScript(file: File): Promise<LoadEstimationResult> {
+// src/lib/dxf-processor.ts (example)
+export async function processDxfFile(
+  file: File
+): Promise<LoadEstimationResult> {
   const formData = new FormData();
-  formData.append('file', file);
-  
-  const response = await fetch('http://localhost:5000/api/process-dxf', {
-    method: 'POST',
-    body: formData
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to process file');
-  }
-  
+  formData.append("file", file);
+
+  const response = await fetch(
+    import.meta.env.VITE_API_URL + "/api/process-dxf",
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  if (!response.ok) throw new Error("Failed to process file");
   return await response.json();
 }
 ```
 
 2. **Start Backend Server**:
+
 ```bash
 cd backend
 npm start
@@ -181,14 +191,17 @@ npm start
 ### API Endpoints
 
 #### POST /api/process-dxf
+
 Upload and process DXF file
 
 **Request:**
+
 - Method: POST
 - Content-Type: multipart/form-data
 - Body: file (DXF file)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -199,9 +212,11 @@ Upload and process DXF file
 ```
 
 #### GET /api/health
+
 Check API health
 
 **Response:**
+
 ```json
 {
   "status": "ok",
@@ -214,16 +229,19 @@ Check API health
 ### Design System
 
 **Colors:**
+
 - Primary: Blue (#3B82F6)
 - Background: Gradient (slate-50 → blue-50)
 - Text: Gray scale
 
 **Typography:**
+
 - Headings: DM Sans (bold)
 - Body: DM Sans (regular)
 - Code: JetBrains Mono
 
 **Spacing:**
+
 - Use Tailwind spacing scale
 - Consistent padding/margins
 - Generous whitespace
@@ -231,11 +249,13 @@ Check API health
 ### Adding Custom Styles
 
 1. **Tailwind Utilities** (preferred):
+
 ```tsx
 <div className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100">
 ```
 
 2. **CSS Modules** (for complex components):
+
 ```css
 /* component.module.css */
 .myComponent {
@@ -245,6 +265,7 @@ Check API health
 ```
 
 3. **Global Styles** (sparingly):
+
 ```css
 /* src/index.css */
 .global-class {
@@ -268,6 +289,7 @@ Check API health
 ### Browser Testing
 
 Test in:
+
 - Chrome (latest)
 - Firefox (latest)
 - Safari (latest)
@@ -295,6 +317,7 @@ npm run build
 ### Common Issues
 
 **1. Port Already in Use**
+
 ```bash
 # Frontend (5173)
 lsof -ti:5173 | xargs kill -9
@@ -303,18 +326,17 @@ lsof -ti:5173 | xargs kill -9
 lsof -ti:5000 | xargs kill -9
 ```
 
-**2. Python Dependencies**
-```bash
-pip3 install --upgrade ezdxf shapely
-```
+<!-- Removed Python dependency instructions; backend is implemented in TypeScript (Node.js). -->
 
 **3. Node Modules Issues**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 **4. TypeScript Errors**
+
 ```bash
 npm run build  # Check for type errors
 ```
@@ -322,12 +344,14 @@ npm run build  # Check for type errors
 ## Deployment
 
 ### Frontend (Vercel/Netlify)
+
 ```bash
 npm run build
 # Deploy dist/ folder
 ```
 
 ### Backend (Railway/Render)
+
 ```bash
 cd backend
 # Deploy with Node.js 18+
@@ -361,4 +385,5 @@ test: Add tests
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Tailwind CSS](https://tailwindcss.com/docs)
 - [Vite Guide](https://vitejs.dev/guide/)
-- [ezdxf Documentation](https://ezdxf.readthedocs.io/)
+- [dxf-parser (npm)](https://www.npmjs.com/package/dxf-parser)
+- [@flatten-js/core (npm)](https://www.npmjs.com/package/@flatten-js/core)

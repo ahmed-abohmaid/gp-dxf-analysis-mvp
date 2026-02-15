@@ -40,6 +40,8 @@ cd backend
 npm run dev
 ```
 
+The backend runs an Express server (`backend/server.js`) implemented in TypeScript.
+
 **Terminal 2 - Frontend:**
 
 ```bash
@@ -58,9 +60,9 @@ Open http://localhost:5173 and upload a DXF file!
 ## Project Structure
 
 ```
-load-dashboard/
+dashboard-mvp/
 ├── src/               # Frontend source code
-├── backend/           # Backend API & Python script
+├── backend/           # Backend API (TypeScript)
 ├── package.json       # Frontend dependencies
 └── README.md          # Full documentation
 ```
@@ -77,7 +79,7 @@ npm run lint          # Check code
 npm run format        # Format code
 
 # Backend
-cd backend && npm start    # Start API
+cd backend && npm start    # Start Express API (backend/server.js)
 ```
 
 ## Next Steps
@@ -85,7 +87,7 @@ cd backend && npm start    # Start API
 1. Read `README.md` for full documentation
 2. Check `DEVELOPMENT.md` for development guide
 3. Review `PROJECT_SUMMARY.md` for architecture overview
-4. Customize load factors in `backend/process_dxf.py`
+4. Customize load factors in `backend/config.ts`
 5. Modify UI in `src/` files
 
 ## Troubleshooting
@@ -97,10 +99,14 @@ lsof -ti:5173 | xargs kill -9
 npm run dev
 ```
 
-**Python errors?**
+**Backend errors?**
+
+If you see server errors, make sure Node dependencies are installed in `backend/` and restart the server:
 
 ```bash
-pip3 install --upgrade ezdxf shapely
+cd backend
+npm install
+npm run dev
 ```
 
 **Build errors?**
@@ -121,7 +127,7 @@ npm install
 ✅ Modern React + TypeScript dashboard
 ✅ shadcn/ui components with Tailwind CSS
 ✅ Drag-and-drop file upload
-✅ DXF processing with Python
+✅ DXF processing with Node.js (TypeScript) using `dxf-parser`, `@flatten-js/core` and an Express API server
 ✅ Detailed load calculation table
 ✅ Clean, maintainable code
 ✅ Full documentation
